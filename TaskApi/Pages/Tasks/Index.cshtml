@@ -1,0 +1,103 @@
+﻿@page
+@model TaskApi.Pages.Tasks.IndexModel
+@{
+    ViewData["Title"] = "Tasks";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Tasks</h1>
+        <p class="page-subtitle">@Model.Tasks.Count() task(s) found</p>
+    </div>
+    <a href="/Tasks/Create" class="btn btn-primary">+ New Task</a>
+</div>
+
+<form method="get" class="filter-bar">
+    <select name="status" class="filter-select" onchange="this.form.submit()">
+        <option value="">All Statuses</option>
+        @foreach (var s in Enum.GetValues<Models.TaskStatus>())
+        {
+            <option value="@s" selected="@(Model.Filter.Status == s)">@s</option>
+        }
+    </select>
+
+    <select name="priority" class="filter-select" onchange="this.form.submit()">
+        <option value="">All Priorities</option>
+        @foreach (var p in Enum.GetValues<TaskPriority>())
+        {
+            <option value="@p" selected="@(Model.Filter.Priority == p)">@p</option>
+        }
+    </select>
+
+    <input name="tag" type="text" class="filter-input" placeholder="Filter by tag…"
+           value="@Model.Filter.Tag" />
+
+    <label class="filter-check">
+        <input type="checkbox" name="overdueOnly" value="true"
+        @(Model.Filter.OverdueOnly == true ? "checked" : "")
+               onchange="this.form.submit()" />
+        Overdue only
+    </label>
+
+    <button type="submit" class="btn btn-secondary">Filter</button>
+    <a href="/Tasks" class="btn btn-ghost">Clear</a>
+</form>
+
+@if (!Model.Tasks.Any())
+{
+    <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <p>No tasks match your filters.</p>
+        <a href="/Tasks/Create" class="btn btn-primary">Create one</a>
+    </div>
+}
+else
+{
+    <div class="card">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Tags</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var task in Model.Tasks)
+                {
+                    <tr class="@(task.IsOverdue() ? "row-overdue" : "")">
+                        <td class="td-title">
+                            @task.Title
+                            @if (task.IsOverdue())
+                            {
+                                <span class="badge badge-danger">Overdue</span>
+                            }
+                        </td>
+                        <td><span class="badge badge-priority-@task.Priority.ToString().ToLower()">@task.Priority</span></td>
+                        <td><span class="badge badge-status-@task.Status.ToString().ToLower()">@task.Status</span></td>
+                        <td class="td-date">
+                            @(task.DueDate.HasValue? task.DueDate.Value.ToString("dd MMM yyyy") : "—")
+                        </td>
+                        <td class="td-tags">
+                            @foreach (var tag in task.Tags)
+                            {
+                                <span class="tag">@tag</span>
+                            }
+                        </td>
+                        <td class="td-actions">
+                            <a href="/Tasks/Edit/@task.Id" class="btn btn-xs btn-secondary">Edit</a>
+                            <form method="post" asp-page-handler="Delete" style="display:inline"
+                                  onsubmit="return confirm('Delete this task?')">
+                                <input type="hidden" name="id" value="@task.Id" />
+                                <button type="submit" class="btn btn-xs btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

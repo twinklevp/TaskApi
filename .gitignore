@@ -1,0 +1,27 @@
+# Build output
+bin/
+obj/
+
+# SQLite database files — contain real data, never commit these
+*.db
+*.db-shm
+*.db-wal
+
+# .NET user secrets
+**/secrets.json
+appsettings.Development.json
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+
+# Rider IDE
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Publish output
+publish/

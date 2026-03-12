@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — TaskAPI</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div class="shell">
+
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-icon">⚡</span>
+                <span class="brand-name">TaskAPI</span>
+                <span class="brand-badge">.NET 10</span>
+            </div>
+            <nav class="nav">
+                <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString()?.StartsWith("/Tasks") == true ? "active" : "")"
+                       href="/Tasks">
+                    <span class="nav-icon">☰</span> Tasks
+                </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Stats" ? "active" : "")"
+                       href="/Stats">
+                    <span class="nav-icon">📊</span> Stats
+                </a>
+                <a class="nav-link" href="/openapi/v1.json" target="_blank">
+                    <span class="nav-icon">📄</span> OpenAPI
+                </a>
+            </nav>
+            <div class="sidebar-footer">C# 14 · EF Core · SQLite</div>
+        </aside>
+
+        <main class="main">
+            <div class="page-content">
+                @RenderBody()
+            </div>
+        </main>
+
+    </div>
+    <script src="~/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,112 @@
+﻿@page
+@model TaskApi.Pages.StatsModel
+@{
+    ViewData["Title"] = "Stats";
+    var s = Model.Stats;
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Stats Dashboard</h1>
+        <p class="page-subtitle">Powered by .NET 10 LINQ — CountBy · AggregateBy · Index()</p>
+    </div>
+</div>
+
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-value">@s.Total</div>
+        <div class="kpi-label">Total Tasks</div>
+    </div>
+    <div class="kpi-card kpi-green">
+        <div class="kpi-value">@s.Completed</div>
+        <div class="kpi-label">Completed</div>
+    </div>
+    <div class="kpi-card kpi-red">
+        <div class="kpi-value">@s.Overdue</div>
+        <div class="kpi-label">Overdue</div>
+    </div>
+    <div class="kpi-card kpi-blue">
+        <div class="kpi-value">@s.CompletionRate%</div>
+        <div class="kpi-label">Completion Rate</div>
+    </div>
+</div>
+
+<div class="stats-grid">
+
+    <div class="card">
+        <h2 class="card-title">By Status <span class="card-badge">CountBy</span></h2>
+        <div class="bar-list">
+            @foreach (var kv in s.ByStatus.OrderByDescending(k => k.Value))
+            {
+                var pct = s.Total == 0 ? 0 : (int)((double)kv.Value / s.Total * 100);
+                <div class="bar-row">
+                    <span class="bar-label">
+                        <span class="badge badge-status-@kv.Key.ToLower()">@kv.Key</span>
+                    </span>
+                    <div class="bar-track"><div class="bar-fill" style="width:@pct%"></div></div>
+                    <span class="bar-count">@kv.Value</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="card-title">By Priority <span class="card-badge">CountBy</span></h2>
+        <div class="bar-list">
+            @foreach (var kv in s.ByPriority.OrderByDescending(k => k.Value))
+            {
+                var pct = s.Total == 0 ? 0 : (int)((double)kv.Value / s.Total * 100);
+                <div class="bar-row">
+                    <span class="bar-label">
+                        <span class="badge badge-priority-@kv.Key.ToLower()">@kv.Key</span>
+                    </span>
+                    <div class="bar-track"><div class="bar-fill bar-fill-priority" style="width:@pct%"></div></div>
+                    <span class="bar-count">@kv.Value</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="card-title">Top Tags <span class="card-badge">AggregateBy</span></h2>
+        @if (!s.TopTags.Any())
+        {
+            <p class="muted" style="padding:16px 20px">No tags found.</p>
+        }
+        else
+        {
+            <div class="tag-list">
+                @foreach (var t in s.TopTags)
+                {
+                    <div class="tag-row">
+                        <span class="tag tag-lg">@t.Tag</span>
+                        <span class="tag-count">@t.Count task@(t.Count != 1 ? "s" : "")</span>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+</div>
+
+<div class="callout">
+    <h3 class="callout-title">🔬 LINQ Features Used Here</h3>
+    <div class="callout-grid">
+        <div>
+            <code>CountBy</code>
+            <p>Groups and counts tasks by Status and Priority in a single pass — no intermediate <code>GroupBy</code> allocation.</p>
+        </div>
+        <div>
+            <code>AggregateBy</code>
+            <p>Accumulates tag frequency across all tasks per key without materialising groups first.</p>
+        </div>
+        <div>
+            <code>Index()</code>
+            <p>Enumerates tasks with their position as <code>(int Index, Task Item)</code> pairs — no manual counter needed.</p>
+        </div>
+        <div>
+            <code>FrozenDictionary</code>
+            <p>Stats snapshots stored in a read-optimised immutable dictionary with faster lookup than a regular <code>Dictionary</code>.</p>
+        </div>
+    </div>
+</div>
