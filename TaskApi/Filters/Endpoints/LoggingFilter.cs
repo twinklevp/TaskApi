@@ -1,11 +1,9 @@
-﻿// ============================================================
-//  Filters/Endpoints/LoggingFilter.cs
-//  ✅ Endpoint Filter — request/response logging per route group
-//
+﻿//  Filters/Endpoints/LoggingFilter.cs
+//  Endpoint Filter — request/response logging per route group
+
 //  Attached only to the /api/tasks group — not globally.
 //  Logs method, path, and response status for every request
 //  that hits the tasks endpoints.
-// ============================================================
 
 namespace TaskApi.Filters.Endpoints;
 
@@ -17,7 +15,7 @@ public class LoggingFilter(ILogger<LoggingFilter> logger) : IEndpointFilter
     {
         var request = context.HttpContext.Request;
 
-        // ─── Before ───────────────────────────────────────────
+        // Before
         logger.LogInformation(
             "[TaskApi] → {Method} {Path}",
             request.Method,
@@ -25,10 +23,10 @@ public class LoggingFilter(ILogger<LoggingFilter> logger) : IEndpointFilter
 
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-        // ─── Handler ──────────────────────────────────────────
+        // Handler 
         var result = await next(context);
 
-        // ─── After ────────────────────────────────────────────
+        // After
         stopwatch.Stop();
 
         logger.LogInformation(

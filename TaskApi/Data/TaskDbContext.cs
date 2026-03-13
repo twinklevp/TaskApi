@@ -1,8 +1,6 @@
-﻿// ============================================================
-//  Data/TaskDbContext.cs — EF Core DbContext
-//  ✅ C# 14:     Partial Members
-//  ✅ EF Core 10: Named Query Filters
-// ============================================================
+﻿//  Data/TaskDbContext.cs — EF Core DbContext
+//  C# 14:     Partial Members
+//  EF Core 10: Named Query Filters
 
 using Microsoft.EntityFrameworkCore;
 using TaskApi.Models;
@@ -16,7 +14,7 @@ public sealed partial class TaskDbContext(DbContextOptions<TaskDbContext> option
 {
     public DbSet<Models.Task> Tasks => Set<Models.Task>();
 
-    // ✅ C# 14: Partial member DECLARATION
+    //    C# 14: Partial member DECLARATION
     //    Signature lives here — implementation is in TaskDbContext.Hooks.cs
     //    If no implementation is provided, the compiler removes the call entirely (zero cost)
     partial void OnTaskSaving(Models.Task task);
@@ -45,7 +43,7 @@ public sealed partial class TaskDbContext(DbContextOptions<TaskDbContext> option
             entity.HasIndex(t => t.Status);
             entity.HasIndex(t => t.Priority);
 
-            // ✅ EF Core 10: Named Query Filter
+            //    .net 10: Named Query Filter
             //    Filters out Cancelled tasks from ALL queries by default.
             //    Before EF Core 10: HasQueryFilter() was unnamed — you could only
             //    disable ALL filters with IgnoreQueryFilters(), not individual ones.
@@ -65,7 +63,7 @@ public sealed partial class TaskDbContext(DbContextOptions<TaskDbContext> option
         foreach (var entry in ChangeTracker.Entries<Models.Task>()
             .Where(e => e.State is EntityState.Added or EntityState.Modified))
         {
-            // ✅ C# 14: calls the partial method — implementation in Hooks.cs
+            // C# 14: calls the partial method — implementation in Hooks.cs
             OnTaskSaving(entry.Entity);
         }
     }

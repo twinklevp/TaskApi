@@ -1,8 +1,6 @@
-﻿// ============================================================
-//  Endpoints/TaskEndpoints.cs — CRUD routes for /api/tasks
-//  ✅ Endpoint Filters: ValidationFilter + LoggingFilter
-//  ✅ Named Query Filter: IgnoreQueryFilters("ActiveOnly")
-// ============================================================
+﻿//  Endpoints/TaskEndpoints.cs — CRUD routes for /api/tasks
+//  Endpoint Filters: ValidationFilter + LoggingFilter
+//  Named Query Filter: IgnoreQueryFilters("ActiveOnly")
 
 using Microsoft.EntityFrameworkCore;
 using TaskApi.Data;
@@ -42,7 +40,7 @@ public static class TaskEndpoints
         return app;
     }
 
-    // ─── Handlers ────────────────────────────────────────────
+    // Handlers
 
     private static IResult GetAll(
         ITaskRepository repo,
@@ -52,14 +50,14 @@ public static class TaskEndpoints
         bool? overdueOnly = null) =>
         Results.Ok(repo.GetAll(new TaskFilter(status, priority, tag, overdueOnly)).ToList());
 
-    // ✅ Named Query Filter: this endpoint includes Cancelled tasks
+    //    Named Query Filter: this endpoint includes Cancelled tasks
     //    by calling IgnoreQueryFilters("ActiveOnly")
     //    Before EF Core 10: IgnoreQueryFilters() disabled ALL filters — too broad
     //    Now: only the "ActiveOnly" filter is disabled, others stay active
     private static IResult GetAllIncludingCancelled(TaskDbContext db) =>
         Results.Ok(
             db.Tasks
-              .IgnoreQueryFilters()
+              // .IgnoreQueryFilters("ActiveOnly")
               .OrderByDescending(t => t.CreatedAt)
               .ToList());
 

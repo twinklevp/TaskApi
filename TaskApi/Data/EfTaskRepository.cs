@@ -1,8 +1,7 @@
 ﻿//  Data/EfTaskRepository.cs — SQLite-backed repository
 //  LINQ:         CountBy, AggregateBy, Index()
-//  Collections:  FrozenDictionary
 //  C# 14:        Null-condition assignment (??=)
-//  EF Core 10:   Named Query Filter (IgnoreQueryFilters)
+//  EF Core 10:   Named Query Filter
 
 using System.Collections.Frozen;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +43,7 @@ public sealed class EfTaskRepository(TaskDbContext db) : ITaskRepository
     public Models.Task? GetById(Guid id) =>
         db.Tasks.AsNoTracking().FirstOrDefault(t => t.Id == id);
 
-    // ─── Mutations ───────────────────────────────────────────
+    // Mutations 
 
     public Models.Task Add(Models.Task task)
     {
@@ -71,7 +70,7 @@ public sealed class EfTaskRepository(TaskDbContext db) : ITaskRepository
         return true;
     }
 
-    // ─── Stats ───────────────────────────────────────────────
+    // Stats 
 
     public TaskStats GetStats()
     {
@@ -80,7 +79,7 @@ public sealed class EfTaskRepository(TaskDbContext db) : ITaskRepository
         //    Now: only disables the named "ActiveOnly" filter
         var all = db.Tasks
             .AsNoTracking()
-            .IgnoreQueryFilters()
+          //  .IgnoreQueryFilters("ActiveOnly")
             .AsEnumerable()
             .ToList();
 
@@ -93,7 +92,7 @@ public sealed class EfTaskRepository(TaskDbContext db) : ITaskRepository
             .CountBy(t => t.Priority.ToString())
             .ToDictionary(k => k.Key, k => k.Value);
 
-        // ✅ AggregateBy — per-tag frequency without GroupBy
+        // AggregateBy — per-tag frequency without GroupBy
         var topTags = all
             .SelectMany(t => t.Tags.Select(tag => (tag, t)))
             .AggregateBy(
