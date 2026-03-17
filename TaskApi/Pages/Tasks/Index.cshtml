@@ -10,7 +10,10 @@
         <p class="page-subtitle">@Model.Tasks.Count() task(s) found</p>
     </div>
     <a href="/Tasks/Create" class="btn btn-primary">+ New Task</a>
+    <button id="call-api-btn" type="button" class="btn btn-ghost">Call API</button>
 </div>
+
+<div id="api-result" style="margin:8px 0 16px 0;color:#333;font-size:0.95rem"></div>
 
 <form method="get" class="filter-bar">
     <select name="status" class="filter-select" onchange="this.form.submit()">
