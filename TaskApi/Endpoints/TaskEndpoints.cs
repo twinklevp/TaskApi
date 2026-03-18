@@ -2,7 +2,6 @@
 //  Endpoint Filters: ValidationFilter + LoggingFilter
 //  Named Query Filter: IgnoreQueryFilters("ActiveOnly")
 
-using Microsoft.EntityFrameworkCore;
 using TaskApi.Data;
 using TaskApi.Filters;
 using TaskApi.Filters.Endpoints;
